@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 Green_font_prefix="\033[32m"
 Red_font_prefix="\033[31m"
 Font_color_suffix="\033[0m"
@@ -45,16 +45,16 @@ net.ipv4.tcp_no_metrics_save=1
 net.ipv4.tcp_ecn=0
 net.ipv4.tcp_frto=0
 net.ipv4.tcp_mtu_probing=0
-net.ipv4.tcp_rfc1337=1
+net.ipv4.tcp_rfc1337=0
 net.ipv4.tcp_sack=1
 net.ipv4.tcp_fack=1
-net.ipv4.tcp_window_scaling=2
-net.ipv4.tcp_adv_win_scale=2
+net.ipv4.tcp_window_scaling=1
+net.ipv4.tcp_adv_win_scale=1
 net.ipv4.tcp_moderate_rcvbuf=1
-net.ipv4.tcp_rmem=4096 65536 37331520
-net.ipv4.tcp_wmem=4096 65536 37331520
-net.core.rmem_max=37331520
-net.core.wmem_max=37331520
+net.core.rmem_max=16777216
+net.core.wmem_max=16777216
+net.ipv4.tcp_rmem=4096 87380 16777216
+net.ipv4.tcp_wmem=4096 16384 16777216
 net.ipv4.udp_rmem_min=8192
 net.ipv4.udp_wmem_min=8192
 net.core.default_qdisc=fq
@@ -95,6 +95,11 @@ sysctl -p && sysctl --system
 ulimit_tune(){
 
 echo "1000000" > /proc/sys/fs/file-max
+sed -i '/fs.file-max/d' /etc/sysctl.conf
+cat >> '/etc/sysctl.conf' << EOF
+fs.file-max=1000000
+EOF
+
 ulimit -SHn 1000000 && ulimit -c unlimited
 echo "root     soft   nofile    1000000
 root     hard   nofile    1000000
